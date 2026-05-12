@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="10.0.5" />
+    <PackageReference Include="Remote.Linq.Newtonsoft.Json" Version="7.3.1" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.9.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Interop.READERDEMO">
+      <HintPath>..\..\Regula7017.ModernSample\Regula7017.ModernSample\obj\Debug\net8.0-windows\Interop.READERDEMO.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
