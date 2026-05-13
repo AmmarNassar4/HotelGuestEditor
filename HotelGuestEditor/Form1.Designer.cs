@@ -77,6 +77,8 @@
             lblArrivalSearchDate = new Label();
             dtArrivalSearchDate = new DateTimePicker();
             btnSearchReservations = new Button();
+            lblReservationNameFilter = new Label();
+            txtReservationNameFilter = new TextBox();
             dgvReservations = new DataGridView();
             dtExpiryDate = new DateTimePicker();
             chkExpiryDate = new CheckBox();
@@ -652,6 +654,24 @@
             btnSearchReservations.UseVisualStyleBackColor = true;
             btnSearchReservations.Click += btnSearchReservations_Click;
             // 
+            // lblReservationNameFilter
+            // 
+            lblReservationNameFilter.AutoSize = true;
+            lblReservationNameFilter.Location = new Point(440, 24);
+            lblReservationNameFilter.Name = "lblReservationNameFilter";
+            lblReservationNameFilter.Size = new Size(74, 15);
+            lblReservationNameFilter.TabIndex = 114;
+            lblReservationNameFilter.Text = "Name Search";
+            // 
+            // txtReservationNameFilter
+            // 
+            txtReservationNameFilter.Location = new Point(530, 20);
+            txtReservationNameFilter.Name = "txtReservationNameFilter";
+            txtReservationNameFilter.PlaceholderText = "Type guest name...";
+            txtReservationNameFilter.Size = new Size(320, 23);
+            txtReservationNameFilter.TabIndex = 115;
+            txtReservationNameFilter.TextChanged += txtReservationNameFilter_TextChanged;
+            // 
             // dgvReservations
             // 
             dgvReservations.AllowUserToAddRows = false;
@@ -768,6 +788,8 @@
             Controls.Add(dtBirthDate);
             Controls.Add(chkBirthDate);
             Controls.Add(lblBirthDate);
+            Controls.Add(txtReservationNameFilter);
+            Controls.Add(lblReservationNameFilter);
             Controls.Add(dgvReservations);
             Controls.Add(btnSearchReservations);
             Controls.Add(dtArrivalSearchDate);
@@ -896,6 +918,8 @@
         private System.Windows.Forms.Label lblArrivalSearchDate;
         private System.Windows.Forms.DateTimePicker dtArrivalSearchDate;
         private System.Windows.Forms.Button btnSearchReservations;
+        private System.Windows.Forms.Label lblReservationNameFilter;
+        private System.Windows.Forms.TextBox txtReservationNameFilter;
         private System.Windows.Forms.DataGridView dgvReservations;
         private Button button3;
         private Button button2;

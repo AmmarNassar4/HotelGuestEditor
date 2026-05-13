@@ -189,19 +189,67 @@ namespace HotelGuestEditor
         {
             int arrDate = ToYyyyMmDdInt(dtArrivalSearchDate.Value.Date);
 
-            string sql = @"
-;WITH ReservationGuests AS
+            string sql = @";WITH LastReservationLine AS
+(
+    SELECT
+        R1.RESNUB,
+        R1.SRLNUB,
+        R1.SUBSRL,
+        R1.UPDDAT,
+        R1.UPDTIM,
+        R1.ARRDAT,
+
+        CASE
+            WHEN
+                ISNULL(R1.SGLBKD, 0) + ISNULL(R1.SGLPRV, 0) + ISNULL(R1.SGLCNF, 0) + ISNULL(R1.SGLWLS, 0) + ISNULL(R1.SGLREF, 0) + ISNULL(R1.SGLCMP, 0) +
+                ISNULL(R1.DBLBKD, 0) + ISNULL(R1.DBLPRV, 0) + ISNULL(R1.DBLCNF, 0) + ISNULL(R1.DBLWLS, 0) + ISNULL(R1.DBLREF, 0) + ISNULL(R1.DBLCMP, 0) +
+                ISNULL(R1.TPLBKD, 0) + ISNULL(R1.TPLPRV, 0) + ISNULL(R1.TPLCNF, 0) + ISNULL(R1.TPLWLS, 0) + ISNULL(R1.TPLREF, 0) + ISNULL(R1.TPLCMP, 0) +
+                ISNULL(R1.QUDBKD, 0) + ISNULL(R1.QUDPRV, 0) + ISNULL(R1.QUDCNF, 0) + ISNULL(R1.QUDWLS, 0) + ISNULL(R1.QUDREF, 0) + ISNULL(R1.QUDCMP, 0) +
+                ISNULL(R1.ADTPAX, 0) + ISNULL(R1.CHDPAX, 0) + ISNULL(R1.INFPAX, 0) + ISNULL(R1.EXBPAX, 0) + ISNULL(R1.CMPPAX, 0)
+                = 0
+            THEN 1
+            ELSE 0
+        END AS IsLastLineZero,
+
+        ROW_NUMBER() OVER
+        (
+            PARTITION BY R1.RESNUB
+            ORDER BY
+                R1.UPDDAT DESC,
+                R1.UPDTIM DESC,
+                R1.SRLNUB DESC,
+                R1.SUBSRL DESC
+        ) AS LastLineRowNo
+    FROM PMS.FMR01TBL R1
+    WHERE R1.ARRDAT = @ARRDAT
+),
+ActiveReservation AS
+(
+    SELECT
+        RESNUB,
+        UPDDAT AS LastUPDDAT,
+        UPDTIM AS LastUPDTIM
+    FROM LastReservationLine
+    WHERE LastLineRowNo = 1
+      AND IsLastLineZero = 0
+),
+ReservationGuests AS
 (
     SELECT
         CAST(R1.RESNUB AS BIGINT) AS RESNUB,
         CAST(R1.SRLNUB AS INT) AS SRLNUB,
         CAST(R1.SUBSRL AS INT) AS SUBSRL,
+
+        AR.LastUPDDAT,
+        AR.LastUPDTIM,
+
         LTRIM(RTRIM(CONCAT(
             NULLIF(LTRIM(RTRIM(R2.GSTTIT)), ''), ' ',
             NULLIF(LTRIM(RTRIM(R2.FSTNAM)), ''), ' ',
             NULLIF(LTRIM(RTRIM(R2.MIDNAM)), ''), ' ',
             NULLIF(LTRIM(RTRIM(R2.LSTNAM)), '')
         ))) AS FullName,
+
         CASE
             WHEN NULLIF(LTRIM(RTRIM(CONCAT(
                 NULLIF(LTRIM(RTRIM(R2.GSTTIT)), ''), ' ',
@@ -211,6 +259,7 @@ namespace HotelGuestEditor
             ))), '') IS NULL THEN 1
             ELSE 0
         END AS NoNameSort,
+
         ROW_NUMBER() OVER
         (
             PARTITION BY R1.RESNUB
@@ -224,27 +273,34 @@ namespace HotelGuestEditor
                     ))), '') IS NULL THEN 1
                     ELSE 0
                 END,
-                LTRIM(RTRIM(CONCAT(
-                    NULLIF(LTRIM(RTRIM(R2.GSTTIT)), ''), ' ',
-                    NULLIF(LTRIM(RTRIM(R2.FSTNAM)), ''), ' ',
-                    NULLIF(LTRIM(RTRIM(R2.MIDNAM)), ''), ' ',
-                    NULLIF(LTRIM(RTRIM(R2.LSTNAM)), '')
-                ))),
                 R1.SRLNUB,
                 R1.SUBSRL
         ) AS RowNo
     FROM PMS.FMR01TBL R1
+    INNER JOIN ActiveReservation AR
+        ON AR.RESNUB = R1.RESNUB
     LEFT JOIN PMS.FMR02TBL R2
-        ON R2.RESNUB = R1.RESNUB AND R2.SRLNUB = R1.SRLNUB AND R2.SUBSRL = R1.SUBSRL
-    WHERE R1.ARRDAT = @ARRDAT AND NOT EXISTS
+        ON R2.RESNUB = R1.RESNUB
+       AND R2.SRLNUB = R1.SRLNUB
+       AND R2.SUBSRL = R1.SUBSRL
+    WHERE R1.ARRDAT = @ARRDAT
+      AND NOT EXISTS
+      (
+          SELECT 1
+          FROM PMS.FMOCCTBL O
+          WHERE O.RESNUB = R1.RESNUB
+      )
+),
+ReservationList AS
 (
-    SELECT 1
-    FROM PMS.FMOCCTBL O
-    WHERE O.RESNUB = R1.RESNUB
-)
-), ReservationList AS
-(
-    SELECT RESNUB, SRLNUB, SUBSRL, FullName, NoNameSort
+    SELECT
+        RESNUB,
+        SRLNUB,
+        SUBSRL,
+        FullName,
+        NoNameSort,
+        LastUPDDAT,
+        LastUPDTIM
     FROM ReservationGuests
     WHERE RowNo = 1
 )
@@ -258,7 +314,6 @@ SELECT
         NULLIF(LTRIM(RTRIM(R0.COMNAM)), ''),
         NULLIF(LTRIM(RTRIM(R0.BUSSOR)), ''),
         NULLIF(LTRIM(RTRIM(R0.RESMOD)), ''),
-        
         ''
     ) AS ReservationSource,
     (
@@ -269,7 +324,10 @@ SELECT
 FROM ReservationList RL
 LEFT JOIN PMS.FMR00TBL R0
     ON R0.RESNUB = RL.RESNUB
-ORDER BY RL.NoNameSort, RL.FullName, RL.RESNUB;";
+ORDER BY
+    RL.NoNameSort,
+    RL.FullName,
+    RL.RESNUB;";
 
             using (var con = new SqlConnection(_connectionString))
             using (var cmd = new SqlCommand(sql, con))
@@ -283,6 +341,12 @@ ORDER BY RL.NoNameSort, RL.FullName, RL.RESNUB;";
 
                 _reservationsBindingSource.DataSource = dt;
                 dgvReservations.DataSource = _reservationsBindingSource;
+
+                if (txtReservationNameFilter != null)
+                    txtReservationNameFilter.Clear();
+
+                _reservationsBindingSource.Filter = string.Empty;
+
                 ConfigureReservationsGrid();
                 ApplyReservationsSort("FullName", System.ComponentModel.ListSortDirection.Ascending);
                 ClearForm();
@@ -298,6 +362,48 @@ ORDER BY RL.NoNameSort, RL.FullName, RL.RESNUB;";
 
                 SetMsg($"{dt.Rows.Count} reservation(s) found. Double-click a reservation to load its guest list.");
             }
+        }
+
+        private void txtReservationNameFilter_TextChanged(object sender, EventArgs e)
+        {
+            ApplyReservationNameFilter();
+        }
+
+        private void ApplyReservationNameFilter()
+        {
+            if (_reservationsBindingSource == null || _reservationsBindingSource.DataSource == null)
+                return;
+
+            DataTable table = _reservationsBindingSource.DataSource as DataTable;
+            if (table == null || !table.Columns.Contains("FullName"))
+                return;
+
+            string filterText = txtReservationNameFilter?.Text?.Trim() ?? string.Empty;
+
+            if (string.IsNullOrWhiteSpace(filterText))
+            {
+                _reservationsBindingSource.Filter = string.Empty;
+                ApplyReservationsSort(_reservationSortColumn, _reservationSortDirection);
+                SetMsg($"{table.Rows.Count} reservation(s) found.");
+                return;
+            }
+
+            string escaped = EscapeBindingSourceFilterValue(filterText);
+            _reservationsBindingSource.Filter = $"Convert(FullName, 'System.String') LIKE '%{escaped}%'";
+            ApplyReservationsSort(_reservationSortColumn, _reservationSortDirection);
+            SetMsg($"{_reservationsBindingSource.Count} reservation(s) match name search.");
+        }
+
+        private static string EscapeBindingSourceFilterValue(string value)
+        {
+            if (string.IsNullOrEmpty(value)) return string.Empty;
+
+            return value
+                .Replace("'", "''")
+                .Replace("[", "[[]")
+                .Replace("]", "[]]")
+                .Replace("%", "[%]")
+                .Replace("*", "[*]");
         }
 
         private void ConfigureReservationsGrid()
