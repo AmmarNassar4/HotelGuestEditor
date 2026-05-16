@@ -58,27 +58,46 @@ namespace HotelGuestEditor
             SyncNationalityComboVisibility();
         }
 
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if ((keyData == Keys.Enter || keyData == Keys.Return) && IsNationalityComboActive())
+            {
+                CommitNationalityFromKeyboard();
+                return true;
+            }
+
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        private bool IsNationalityComboActive()
+        {
+            return _cmbNationality != null && (_cmbNationality.Focused || _cmbNationality.ContainsFocus);
+        }
+
+        private void CommitNationalityFromKeyboard()
+        {
+            string typedValue = GetNationalityTypedText();
+            if (string.IsNullOrWhiteSpace(typedValue) && _cmbNationality != null)
+                typedValue = _cmbNationality.Text;
+
+            NormalizeNationalitySelection(typedValue);
+
+            if (_cmbNationality != null)
+            {
+                _cmbNationality.DroppedDown = false;
+                _cmbNationality.SelectionStart = _cmbNationality.Text.Length;
+                _cmbNationality.SelectionLength = 0;
+            }
+        }
+
         private void cmbNationality_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode != Keys.Enter)
+            if (e.KeyCode != Keys.Enter && e.KeyCode != Keys.Return)
                 return;
-
-            string typedValue = GetNationalityTypedText();
 
             e.Handled = true;
             e.SuppressKeyPress = true;
-
-            BeginInvoke(new Action(() =>
-            {
-                NormalizeNationalitySelection(typedValue);
-
-                if (_cmbNationality != null)
-                {
-                    _cmbNationality.DroppedDown = false;
-                    _cmbNationality.SelectionStart = _cmbNationality.Text.Length;
-                    _cmbNationality.SelectionLength = 0;
-                }
-            }));
+            CommitNationalityFromKeyboard();
         }
 
         private string GetNationalityTypedText()
