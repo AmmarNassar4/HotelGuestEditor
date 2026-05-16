@@ -63,16 +63,39 @@ namespace HotelGuestEditor
             if (e.KeyCode != Keys.Enter)
                 return;
 
+            string typedValue = GetNationalityTypedText();
+
             e.Handled = true;
             e.SuppressKeyPress = true;
 
-            NormalizeNationalitySelection();
-
-            if (_cmbNationality != null)
+            BeginInvoke(new Action(() =>
             {
-                _cmbNationality.SelectionStart = _cmbNationality.Text.Length;
-                _cmbNationality.SelectionLength = 0;
+                NormalizeNationalitySelection(typedValue);
+
+                if (_cmbNationality != null)
+                {
+                    _cmbNationality.DroppedDown = false;
+                    _cmbNationality.SelectionStart = _cmbNationality.Text.Length;
+                    _cmbNationality.SelectionLength = 0;
+                }
+            }));
+        }
+
+        private string GetNationalityTypedText()
+        {
+            if (_cmbNationality == null)
+                return string.Empty;
+
+            string text = _cmbNationality.Text ?? string.Empty;
+
+            if (_cmbNationality.SelectionLength > 0 && _cmbNationality.SelectionStart >= 0)
+            {
+                int selectedStart = _cmbNationality.SelectionStart;
+                if (selectedStart < text.Length)
+                    text = text.Substring(0, selectedStart);
             }
+
+            return text.Trim();
         }
 
         private void btnSave_ClickWithNationalityNormalization(object sender, EventArgs e)
@@ -149,7 +172,7 @@ namespace HotelGuestEditor
             }
         }
 
-        private void NormalizeNationalitySelection()
+        private void NormalizeNationalitySelection(string inputText = null)
         {
             if (_cmbNationality == null || _nationalitySyncing)
                 return;
@@ -157,10 +180,12 @@ namespace HotelGuestEditor
             _nationalitySyncing = true;
             try
             {
-                string value = _cmbNationality.Text?.Trim() ?? string.Empty;
+                string value = (inputText ?? _cmbNationality.Text ?? string.Empty).Trim();
                 if (string.IsNullOrWhiteSpace(value))
                 {
                     txtNationality.Text = string.Empty;
+                    _cmbNationality.SelectedIndex = -1;
+                    _cmbNationality.Text = string.Empty;
                     return;
                 }
 
@@ -173,6 +198,8 @@ namespace HotelGuestEditor
                 }
                 else
                 {
+                    _cmbNationality.SelectedIndex = -1;
+                    _cmbNationality.Text = value;
                     txtNationality.Text = value.Trim().ToUpperInvariant();
                 }
             }
