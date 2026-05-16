@@ -105,7 +105,7 @@ namespace HotelGuestEditor
             if (!PrepareGuestFieldsBeforeSave())
                 return;
 
-            btnSave_Click(sender, e);
+            SaveGuestWithVisaNumber();
         }
 
         private void SyncNationalityComboVisibility()
