@@ -16,7 +16,10 @@
 
   <ItemGroup>
     <Reference Include="Interop.READERDEMO">
-      <HintPath>..\..\Regula7017.ModernSample\Regula7017.ModernSample\obj\Debug\net8.0-windows\Interop.READERDEMO.dll</HintPath>
+      <HintPath>..\..\..\Regula7017.ModernSample\Regula7017.ModernSample\obj\Debug\net8.0-windows\Interop.READERDEMO.dll</HintPath>
+    </Reference>
+    <Reference Include="Regula7017.ModernSample">
+      <HintPath>..\..\..\Regula7017.ModernSample\Regula7017.ModernSample\obj\Debug\net8.0-windows\Regula7017.ModernSample.dll</HintPath>
     </Reference>
   </ItemGroup>
 

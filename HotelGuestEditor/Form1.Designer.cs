@@ -39,16 +39,7 @@
             txtMiddleName = new TextBox();
             lblLastName = new Label();
             txtLastName = new TextBox();
-            lblAddress = new Label();
-            txtAddress = new TextBox();
-            lblCity = new Label();
-            txtCity = new TextBox();
-            lblState = new Label();
             txtState = new TextBox();
-            lblCountry = new Label();
-            txtCountry = new TextBox();
-            lblZip = new Label();
-            txtZip = new TextBox();
             lblPhone = new Label();
             txtPhone = new TextBox();
             lblMobile = new Label();
@@ -89,6 +80,15 @@
             dtBirthDate = new DateTimePicker();
             chkBirthDate = new CheckBox();
             lblBirthDate = new Label();
+            txtZip = new TextBox();
+            lblZip = new Label();
+            txtCountry = new TextBox();
+            lblCountry = new Label();
+            lblState = new Label();
+            txtCity = new TextBox();
+            lblCity = new Label();
+            txtAddress = new TextBox();
+            lblAddress = new Label();
             ((System.ComponentModel.ISupportInitialize)dgvReservations).BeginInit();
             SuspendLayout();
             // 
@@ -304,100 +304,18 @@
             txtLastName.TabIndex = 20;
             txtLastName.Visible = false;
             // 
-            // lblAddress
-            // 
-            lblAddress.AutoSize = true;
-            lblAddress.Location = new Point(30, 623);
-            lblAddress.Name = "lblAddress";
-            lblAddress.Size = new Size(49, 15);
-            lblAddress.TabIndex = 21;
-            lblAddress.Text = "Address";
-            lblAddress.Visible = false;
-            // 
-            // txtAddress
-            // 
-            txtAddress.Location = new Point(230, 619);
-            txtAddress.Name = "txtAddress";
-            txtAddress.Size = new Size(260, 23);
-            txtAddress.TabIndex = 22;
-            txtAddress.Visible = false;
-            // 
-            // lblCity
-            // 
-            lblCity.AutoSize = true;
-            lblCity.Location = new Point(30, 655);
-            lblCity.Name = "lblCity";
-            lblCity.Size = new Size(28, 15);
-            lblCity.TabIndex = 23;
-            lblCity.Text = "City";
-            lblCity.Visible = false;
-            // 
-            // txtCity
-            // 
-            txtCity.Location = new Point(230, 651);
-            txtCity.Name = "txtCity";
-            txtCity.Size = new Size(260, 23);
-            txtCity.TabIndex = 24;
-            txtCity.Visible = false;
-            // 
-            // lblState
-            // 
-            lblState.AutoSize = true;
-            lblState.Location = new Point(30, 687);
-            lblState.Name = "lblState";
-            lblState.Size = new Size(33, 15);
-            lblState.TabIndex = 25;
-            lblState.Text = "State";
-            lblState.Visible = false;
-            // 
             // txtState
             // 
-            txtState.Location = new Point(230, 683);
+            txtState.Location = new Point(230, 998);
             txtState.Name = "txtState";
             txtState.Size = new Size(260, 23);
             txtState.TabIndex = 26;
             txtState.Visible = false;
             // 
-            // lblCountry
-            // 
-            lblCountry.AutoSize = true;
-            lblCountry.Location = new Point(30, 719);
-            lblCountry.Name = "lblCountry";
-            lblCountry.Size = new Size(50, 15);
-            lblCountry.TabIndex = 27;
-            lblCountry.Text = "Country";
-            lblCountry.Visible = false;
-            // 
-            // txtCountry
-            // 
-            txtCountry.Location = new Point(230, 715);
-            txtCountry.Name = "txtCountry";
-            txtCountry.Size = new Size(260, 23);
-            txtCountry.TabIndex = 28;
-            txtCountry.Visible = false;
-            // 
-            // lblZip
-            // 
-            lblZip.AutoSize = true;
-            lblZip.Location = new Point(30, 751);
-            lblZip.Name = "lblZip";
-            lblZip.Size = new Size(24, 15);
-            lblZip.TabIndex = 29;
-            lblZip.Text = "Zip";
-            lblZip.Visible = false;
-            // 
-            // txtZip
-            // 
-            txtZip.Location = new Point(230, 747);
-            txtZip.Name = "txtZip";
-            txtZip.Size = new Size(260, 23);
-            txtZip.TabIndex = 30;
-            txtZip.Visible = false;
-            // 
             // lblPhone
             // 
             lblPhone.AutoSize = true;
-            lblPhone.Location = new Point(30, 783);
+            lblPhone.Location = new Point(30, 724);
             lblPhone.Name = "lblPhone";
             lblPhone.Size = new Size(41, 15);
             lblPhone.TabIndex = 31;
@@ -406,7 +324,7 @@
             // 
             // txtPhone
             // 
-            txtPhone.Location = new Point(230, 779);
+            txtPhone.Location = new Point(230, 720);
             txtPhone.Name = "txtPhone";
             txtPhone.Size = new Size(260, 23);
             txtPhone.TabIndex = 32;
@@ -415,7 +333,7 @@
             // lblMobile
             // 
             lblMobile.AutoSize = true;
-            lblMobile.Location = new Point(30, 815);
+            lblMobile.Location = new Point(30, 756);
             lblMobile.Name = "lblMobile";
             lblMobile.Size = new Size(44, 15);
             lblMobile.TabIndex = 33;
@@ -424,7 +342,7 @@
             // 
             // txtMobile
             // 
-            txtMobile.Location = new Point(230, 811);
+            txtMobile.Location = new Point(230, 752);
             txtMobile.Name = "txtMobile";
             txtMobile.Size = new Size(260, 23);
             txtMobile.TabIndex = 34;
@@ -469,7 +387,7 @@
             // lblGender
             // 
             lblGender.AutoSize = true;
-            lblGender.Location = new Point(30, 911);
+            lblGender.Location = new Point(30, 785);
             lblGender.Name = "lblGender";
             lblGender.Size = new Size(45, 15);
             lblGender.TabIndex = 39;
@@ -480,7 +398,7 @@
             // 
             cmbGender.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbGender.FormattingEnabled = true;
-            cmbGender.Location = new Point(230, 907);
+            cmbGender.Location = new Point(230, 781);
             cmbGender.Name = "cmbGender";
             cmbGender.Size = new Size(260, 23);
             cmbGender.TabIndex = 40;
@@ -489,7 +407,7 @@
             // lblGstn
             // 
             lblGstn.AutoSize = true;
-            lblGstn.Location = new Point(30, 943);
+            lblGstn.Location = new Point(30, 908);
             lblGstn.Name = "lblGstn";
             lblGstn.Size = new Size(37, 15);
             lblGstn.TabIndex = 41;
@@ -498,7 +416,7 @@
             // 
             // txtGstn
             // 
-            txtGstn.Location = new Point(230, 939);
+            txtGstn.Location = new Point(230, 904);
             txtGstn.Name = "txtGstn";
             txtGstn.Size = new Size(260, 23);
             txtGstn.TabIndex = 42;
@@ -507,7 +425,7 @@
             // lblDocumentType
             // 
             lblDocumentType.AutoSize = true;
-            lblDocumentType.Location = new Point(30, 975);
+            lblDocumentType.Location = new Point(30, 814);
             lblDocumentType.Name = "lblDocumentType";
             lblDocumentType.Size = new Size(91, 15);
             lblDocumentType.TabIndex = 43;
@@ -516,7 +434,7 @@
             // 
             // txtDocumentType
             // 
-            txtDocumentType.Location = new Point(230, 971);
+            txtDocumentType.Location = new Point(230, 810);
             txtDocumentType.Name = "txtDocumentType";
             txtDocumentType.Size = new Size(260, 23);
             txtDocumentType.TabIndex = 44;
@@ -525,7 +443,7 @@
             // lblPassportNumber
             // 
             lblPassportNumber.AutoSize = true;
-            lblPassportNumber.Location = new Point(30, 1007);
+            lblPassportNumber.Location = new Point(30, 629);
             lblPassportNumber.Name = "lblPassportNumber";
             lblPassportNumber.Size = new Size(99, 15);
             lblPassportNumber.TabIndex = 45;
@@ -534,7 +452,7 @@
             // 
             // txtPassportNumber
             // 
-            txtPassportNumber.Location = new Point(230, 1003);
+            txtPassportNumber.Location = new Point(230, 625);
             txtPassportNumber.Name = "txtPassportNumber";
             txtPassportNumber.Size = new Size(260, 23);
             txtPassportNumber.TabIndex = 46;
@@ -543,7 +461,7 @@
             // lblPassportIssuePlace
             // 
             lblPassportIssuePlace.AutoSize = true;
-            lblPassportIssuePlace.Location = new Point(30, 1039);
+            lblPassportIssuePlace.Location = new Point(30, 661);
             lblPassportIssuePlace.Name = "lblPassportIssuePlace";
             lblPassportIssuePlace.Size = new Size(112, 15);
             lblPassportIssuePlace.TabIndex = 47;
@@ -552,7 +470,7 @@
             // 
             // txtPassportIssuePlace
             // 
-            txtPassportIssuePlace.Location = new Point(230, 1035);
+            txtPassportIssuePlace.Location = new Point(230, 657);
             txtPassportIssuePlace.Name = "txtPassportIssuePlace";
             txtPassportIssuePlace.Size = new Size(260, 23);
             txtPassportIssuePlace.TabIndex = 48;
@@ -561,7 +479,7 @@
             // lblIdType
             // 
             lblIdType.AutoSize = true;
-            lblIdType.Location = new Point(30, 1071);
+            lblIdType.Location = new Point(30, 693);
             lblIdType.Name = "lblIdType";
             lblIdType.Size = new Size(89, 15);
             lblIdType.TabIndex = 49;
@@ -570,7 +488,7 @@
             // 
             // txtIdType
             // 
-            txtIdType.Location = new Point(230, 1067);
+            txtIdType.Location = new Point(230, 689);
             txtIdType.MaxLength = 2;
             txtIdType.Name = "txtIdType";
             txtIdType.Size = new Size(260, 23);
@@ -580,7 +498,7 @@
             // lblIdNumber
             // 
             lblIdNumber.AutoSize = true;
-            lblIdNumber.Location = new Point(30, 1103);
+            lblIdNumber.Location = new Point(35, 1092);
             lblIdNumber.Name = "lblIdNumber";
             lblIdNumber.Size = new Size(94, 15);
             lblIdNumber.TabIndex = 51;
@@ -589,7 +507,7 @@
             // 
             // txtIdNumber
             // 
-            txtIdNumber.Location = new Point(230, 1099);
+            txtIdNumber.Location = new Point(230, 1089);
             txtIdNumber.Name = "txtIdNumber";
             txtIdNumber.Size = new Size(260, 23);
             txtIdNumber.TabIndex = 52;
@@ -659,7 +577,7 @@
             lblReservationNameFilter.AutoSize = true;
             lblReservationNameFilter.Location = new Point(440, 24);
             lblReservationNameFilter.Name = "lblReservationNameFilter";
-            lblReservationNameFilter.Size = new Size(74, 15);
+            lblReservationNameFilter.Size = new Size(77, 15);
             lblReservationNameFilter.TabIndex = 114;
             lblReservationNameFilter.Text = "Name Search";
             // 
@@ -686,7 +604,7 @@
             dgvReservations.ReadOnly = true;
             dgvReservations.RowHeadersVisible = false;
             dgvReservations.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvReservations.Size = new Size(735, 230);
+            dgvReservations.Size = new Size(727, 230);
             dgvReservations.TabIndex = 103;
             dgvReservations.CellDoubleClick += dgvReservations_CellDoubleClick;
             dgvReservations.ColumnHeaderMouseClick += dgvReservations_ColumnHeaderMouseClick;
@@ -773,12 +691,103 @@
             lblBirthDate.Text = "Birth Date";
             lblBirthDate.Visible = false;
             // 
+            // txtZip
+            // 
+            txtZip.Location = new Point(230, 1060);
+            txtZip.Name = "txtZip";
+            txtZip.Size = new Size(260, 23);
+            txtZip.TabIndex = 124;
+            txtZip.Visible = false;
+            // 
+            // lblZip
+            // 
+            lblZip.AutoSize = true;
+            lblZip.Location = new Point(34, 1062);
+            lblZip.Name = "lblZip";
+            lblZip.Size = new Size(24, 15);
+            lblZip.TabIndex = 123;
+            lblZip.Text = "Zip";
+            lblZip.Visible = false;
+            // 
+            // txtCountry
+            // 
+            txtCountry.Location = new Point(230, 1029);
+            txtCountry.Name = "txtCountry";
+            txtCountry.Size = new Size(260, 23);
+            txtCountry.TabIndex = 122;
+            txtCountry.Visible = false;
+            // 
+            // lblCountry
+            // 
+            lblCountry.AutoSize = true;
+            lblCountry.Location = new Point(30, 1033);
+            lblCountry.Name = "lblCountry";
+            lblCountry.Size = new Size(50, 15);
+            lblCountry.TabIndex = 121;
+            lblCountry.Text = "Country";
+            lblCountry.Visible = false;
+            // 
+            // lblState
+            // 
+            lblState.AutoSize = true;
+            lblState.Location = new Point(30, 1001);
+            lblState.Name = "lblState";
+            lblState.Size = new Size(33, 15);
+            lblState.TabIndex = 120;
+            lblState.Text = "State";
+            lblState.Visible = false;
+            // 
+            // txtCity
+            // 
+            txtCity.Location = new Point(230, 965);
+            txtCity.Name = "txtCity";
+            txtCity.Size = new Size(260, 23);
+            txtCity.TabIndex = 119;
+            txtCity.Visible = false;
+            // 
+            // lblCity
+            // 
+            lblCity.AutoSize = true;
+            lblCity.Location = new Point(30, 969);
+            lblCity.Name = "lblCity";
+            lblCity.Size = new Size(28, 15);
+            lblCity.TabIndex = 118;
+            lblCity.Text = "City";
+            lblCity.Visible = false;
+            // 
+            // txtAddress
+            // 
+            txtAddress.Location = new Point(230, 933);
+            txtAddress.Name = "txtAddress";
+            txtAddress.Size = new Size(260, 23);
+            txtAddress.TabIndex = 117;
+            txtAddress.Visible = false;
+            // 
+            // lblAddress
+            // 
+            lblAddress.AutoSize = true;
+            lblAddress.Location = new Point(30, 937);
+            lblAddress.Name = "lblAddress";
+            lblAddress.Size = new Size(49, 15);
+            lblAddress.TabIndex = 116;
+            lblAddress.Text = "Address";
+            lblAddress.Visible = false;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoScroll = true;
-            ClientSize = new Size(900, 1040);
+            ClientSize = new Size(909, 1061);
+            Controls.Add(txtZip);
+            Controls.Add(lblZip);
+            Controls.Add(txtCountry);
+            Controls.Add(lblCountry);
+            Controls.Add(lblState);
+            Controls.Add(txtCity);
+            Controls.Add(lblCity);
+            Controls.Add(txtAddress);
+            Controls.Add(lblAddress);
             Controls.Add(dtExpiryDate);
             Controls.Add(chkExpiryDate);
             Controls.Add(lblExpiryDate);
@@ -819,16 +828,7 @@
             Controls.Add(lblMobile);
             Controls.Add(txtPhone);
             Controls.Add(lblPhone);
-            Controls.Add(txtZip);
-            Controls.Add(lblZip);
-            Controls.Add(txtCountry);
-            Controls.Add(lblCountry);
             Controls.Add(txtState);
-            Controls.Add(lblState);
-            Controls.Add(txtCity);
-            Controls.Add(lblCity);
-            Controls.Add(txtAddress);
-            Controls.Add(lblAddress);
             Controls.Add(txtLastName);
             Controls.Add(lblLastName);
             Controls.Add(txtMiddleName);
@@ -882,16 +882,7 @@
         private System.Windows.Forms.TextBox txtMiddleName;
         private System.Windows.Forms.Label lblLastName;
         private System.Windows.Forms.TextBox txtLastName;
-        private System.Windows.Forms.Label lblAddress;
-        private System.Windows.Forms.TextBox txtAddress;
-        private System.Windows.Forms.Label lblCity;
-        private System.Windows.Forms.TextBox txtCity;
-        private System.Windows.Forms.Label lblState;
         private System.Windows.Forms.TextBox txtState;
-        private System.Windows.Forms.Label lblCountry;
-        private System.Windows.Forms.TextBox txtCountry;
-        private System.Windows.Forms.Label lblZip;
-        private System.Windows.Forms.TextBox txtZip;
         private System.Windows.Forms.Label lblPhone;
         private System.Windows.Forms.TextBox txtPhone;
         private System.Windows.Forms.Label lblMobile;
@@ -932,5 +923,14 @@
         private DateTimePicker dtBirthDate;
         private CheckBox chkBirthDate;
         private Label lblBirthDate;
+        private TextBox txtZip;
+        private Label lblZip;
+        private TextBox txtCountry;
+        private Label lblCountry;
+        private Label lblState;
+        private TextBox txtCity;
+        private Label lblCity;
+        private TextBox txtAddress;
+        private Label lblAddress;
     }
 }
