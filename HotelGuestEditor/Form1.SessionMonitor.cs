@@ -6,7 +6,7 @@ namespace HotelGuestEditor
 {
     public partial class Form1
     {
-        private readonly Timer _sessionMonitorTimer = new Timer { Interval = 10000 };
+        private readonly System.Windows.Forms.Timer _sessionMonitorTimer = new System.Windows.Forms.Timer { Interval = 10000 };
         private bool _sessionMonitorBusy;
         private bool _sessionMonitorAutoRestartEnabled;
         private bool _sessionMonitorRestartPending;
@@ -16,12 +16,6 @@ namespace HotelGuestEditor
         {
             base.OnShown(e);
             StartSessionMonitor();
-        }
-
-        protected override void OnFormClosed(FormClosedEventArgs e)
-        {
-            StopSessionMonitor();
-            base.OnFormClosed(e);
         }
 
         private void StartSessionMonitor()
