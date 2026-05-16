@@ -101,6 +101,10 @@ namespace HotelGuestEditor
         private void btnSave_ClickWithNationalityNormalization(object sender, EventArgs e)
         {
             NormalizeNationalitySelection();
+
+            if (!PrepareGuestFieldsBeforeSave())
+                return;
+
             btnSave_Click(sender, e);
         }
 
