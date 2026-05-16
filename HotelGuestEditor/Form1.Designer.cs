@@ -17,6 +17,7 @@
 
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             lblResNub = new Label();
             txtResNub = new TextBox();
             btnLoadGuests = new Button();
@@ -604,7 +605,7 @@
             dgvReservations.ReadOnly = true;
             dgvReservations.RowHeadersVisible = false;
             dgvReservations.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvReservations.Size = new Size(727, 230);
+            dgvReservations.Size = new Size(710, 230);
             dgvReservations.TabIndex = 103;
             dgvReservations.CellDoubleClick += dgvReservations_CellDoubleClick;
             dgvReservations.ColumnHeaderMouseClick += dgvReservations_ColumnHeaderMouseClick;
@@ -851,6 +852,7 @@
             Controls.Add(btnLoadGuests);
             Controls.Add(txtResNub);
             Controls.Add(lblResNub);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "Form1";
             Text = "Reservation Guest Editor";
             ((System.ComponentModel.ISupportInitialize)dgvReservations).EndInit();
