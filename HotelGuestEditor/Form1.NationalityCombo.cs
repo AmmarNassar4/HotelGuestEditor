@@ -50,8 +50,17 @@ namespace HotelGuestEditor
             _cmbNationality.Leave += (_, __) => NormalizeNationalitySelection();
             btnSave.MouseDown += (_, __) => NormalizeNationalitySelection();
 
+            btnSave.Click -= btnSave_Click;
+            btnSave.Click += btnSave_ClickWithNationalityNormalization;
+
             SyncNationalityComboFromHiddenText();
             SyncNationalityComboVisibility();
+        }
+
+        private void btnSave_ClickWithNationalityNormalization(object sender, EventArgs e)
+        {
+            NormalizeNationalitySelection();
+            btnSave_Click(sender, e);
         }
 
         private void SyncNationalityComboVisibility()
