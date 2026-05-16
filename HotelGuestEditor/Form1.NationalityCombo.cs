@@ -48,6 +48,7 @@ namespace HotelGuestEditor
             txtNationality.TextChanged += (_, __) => SyncNationalityComboFromHiddenText();
             _cmbNationality.SelectedIndexChanged += (_, __) => SyncHiddenNationalityFromCombo();
             _cmbNationality.Leave += (_, __) => NormalizeNationalitySelection();
+            _cmbNationality.KeyDown += cmbNationality_KeyDown;
             btnSave.MouseDown += (_, __) => NormalizeNationalitySelection();
 
             btnSave.Click -= btnSave_Click;
@@ -55,6 +56,23 @@ namespace HotelGuestEditor
 
             SyncNationalityComboFromHiddenText();
             SyncNationalityComboVisibility();
+        }
+
+        private void cmbNationality_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode != Keys.Enter)
+                return;
+
+            e.Handled = true;
+            e.SuppressKeyPress = true;
+
+            NormalizeNationalitySelection();
+
+            if (_cmbNationality != null)
+            {
+                _cmbNationality.SelectionStart = _cmbNationality.Text.Length;
+                _cmbNationality.SelectionLength = 0;
+            }
         }
 
         private void btnSave_ClickWithNationalityNormalization(object sender, EventArgs e)
