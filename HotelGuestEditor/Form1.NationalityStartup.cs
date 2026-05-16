@@ -8,6 +8,7 @@ namespace HotelGuestEditor
         {
             base.OnLoad(e);
             InitializeNationalityCombo();
+            InitializeVisaNumberField();
         }
     }
 }
