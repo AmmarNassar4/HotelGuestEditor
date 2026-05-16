@@ -1,5 +1,7 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
@@ -103,6 +105,7 @@ namespace HotelGuestEditor
             string docTypeCode = GetFieldByFieldType(0);
             string nationalityCode = GetFieldByFieldType(26) ?? GetFieldByFieldType(1);
             string nationality = GetFieldByFieldType(38) ?? GetFieldByFieldType(11);
+            nationalityCode = NormalizeNationalityFromPassport(nationalityCode, nationality);
             string genderCode = GetFieldByFieldType(12);
             string genderArabic = GetFieldByTypeAndLcid(12, 1025);
 
@@ -121,6 +124,28 @@ namespace HotelGuestEditor
                 IssueDate = GetFieldByFieldType(4),
                 ExpiryDate = GetFieldByFieldType(3)
             };
+        }
+
+        private static string NormalizeNationalityFromPassport(string code, string name)
+        {
+            if (!string.IsNullOrWhiteSpace(code))
+            {
+                string normalized = code.Trim().ToUpperInvariant();
+                if (normalized.Length >= 3)
+                    return normalized.Substring(0, 3);
+            }
+
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                if (CountryCatalog.TryFindCode(CountryCatalog.Load(), name, out string mappedCode))
+                    return mappedCode;
+
+                string normalizedName = name.Trim().ToUpperInvariant();
+                if (normalizedName.Length == 3)
+                    return normalizedName;
+            }
+
+            return string.Empty;
         }
 
         private static string MapDocumentType(string docTypeCode)
