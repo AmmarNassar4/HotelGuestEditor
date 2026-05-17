@@ -8,6 +8,7 @@ namespace HotelGuestEditor
     {
         public string BaseUrl { get; private set; } = "https://example.com";
         public string KioskId { get; private set; } = "K1";
+        public string KioskName { get; private set; } = "K1";
         public string TemplateId { get; private set; } = "T_Checkin";
         public int SessionMonitorIntervalSeconds { get; private set; } = 10;
 
@@ -24,6 +25,7 @@ namespace HotelGuestEditor
 
             settings.BaseUrl = ReadString(guestGate, "BaseUrl", settings.BaseUrl).TrimEnd('/');
             settings.KioskId = ReadString(guestGate, "KioskId", settings.KioskId);
+            settings.KioskName = ReadString(guestGate, "KioskName", settings.KioskId);
             settings.TemplateId = ReadString(guestGate, "TemplateId", settings.TemplateId);
             settings.SessionMonitorIntervalSeconds = ReadInt(guestGate, "SessionMonitorIntervalSeconds", settings.SessionMonitorIntervalSeconds, 1, 3600);
 

@@ -28,9 +28,11 @@ namespace HotelGuestEditor
         private readonly RegulaPassportScanService _regulaService = new RegulaPassportScanService();
 
         // ─── GuestGate / SignalR ──────────────────────────────────────────────
-        private const string DefaultBaseUrl = "https://guestgate-ramada.ibaapps.work";
-        private const string FixedKid = "K1";
-        private const string FixedTemplateId = "T_Checkin";
+        private readonly AppSettings _settings = AppSettings.Load();
+        private string DefaultBaseUrl => _settings.BaseUrl;
+        private string FixedKid => _settings.KioskId;
+        private string FixedTemplateId => _settings.TemplateId;
+        private string KioskDisplayName => _settings.KioskName;
 
         private readonly HttpClient _http = new HttpClient();
         private HubConnection _hub;
@@ -57,6 +59,7 @@ namespace HotelGuestEditor
             InitializeComponent();
             InitializeArrivalSearchState();
             InitializeGenderCombo();
+            SetMsg("Ready");
 
             _fixedControls = BuildControlMap();
             _fixedLabels = BuildLabelMap();
@@ -1837,9 +1840,14 @@ END";
 
         private void SetMsg(string text)
         {
+            string kioskName = string.IsNullOrWhiteSpace(KioskDisplayName)
+                ? FixedKid
+                : KioskDisplayName;
+
+            string prefix = $"Reservation Guest Editor — Kiosk: {kioskName}";
             Text = string.IsNullOrWhiteSpace(text)
-                ? "Reservation Guest Editor"
-                : $"Reservation Guest Editor — {text}";
+                ? prefix
+                : $"{prefix} — {text}";
         }
 
         protected override async void OnFormClosed(FormClosedEventArgs e)
