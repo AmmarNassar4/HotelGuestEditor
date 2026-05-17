@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.AspNetCore.SignalR.Client;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -114,7 +114,7 @@ namespace HotelGuestEditor
             // is the active lookup UI.
             _legacyLookupControls = new Control[]
             {
-                btnLoadGuests, lblGuests, cmbGuests, btnLoadSelectedGuest, btnIdentitySearch
+                btnLoadGuests, lblGuests, cmbGuests, btnLoadSelectedGuest
             };
 
             dtArrivalSearchDate.Value = DateTime.Today;
@@ -1294,10 +1294,8 @@ ORDER BY
             var row = ((DataRowView)cmbGuests.SelectedItem).Row;
             int srlNub = Convert.ToInt32(row["SRLNUB"]);
             int subSrl = Convert.ToInt32(row["SUBSRL"]);
-            
-            
+
             LoadGuestDetails(resNub, srlNub, subSrl);
-            btnIdentitySearch.Visible=true;
         }
 
         private void LoadGuestDetails(long resNub, int srlNub, int subSrl)
@@ -1974,7 +1972,6 @@ END";
 
             bool shouldShow = txtNationality.Visible;
             txtNationality.Visible = false;
-            btnIdentitySearch.Visible=false;
             _cmbNationality.Visible = shouldShow;
             _cmbNationality.Enabled = txtNationality.Enabled;
             _cmbNationality.Location = txtNationality.Location;
@@ -2105,7 +2102,7 @@ END";
                 c.Code.IndexOf(text, StringComparison.OrdinalIgnoreCase) >= 0 ||
                 c.DisplayName.IndexOf(text, StringComparison.OrdinalIgnoreCase) >= 0);
         }
-
+    
 
 
         // =====================================================================
@@ -2117,7 +2114,7 @@ END";
             InitializeNationalityCombo();
             InitializeVisaNumberField();
         }
-
+    
 
 
         // =====================================================================
@@ -2233,7 +2230,7 @@ END";
                 return false;
             }
         }
-
+    
 
 
         // =====================================================================
@@ -2324,7 +2321,7 @@ END";
                 _sessionMonitorBusy = false;
             }
         }
-
+    
 
 
         // =====================================================================
@@ -2466,91 +2463,8 @@ END";
                 && resNub > 0
                 && srlNub > 0;
         }
+    
 
-        // =====================================================================
-        // IDENTITY / PASSPORT SEARCH FORM2 RESULT MAPPING
-        // =====================================================================
-        private void btnIdentitySearch_Click(object sender, EventArgs e)
-        {
-            using (var popup = new Form2(_connectionString, txtPassportNumber.Text))
-            {
-                if (popup.ShowDialog(this) == DialogResult.OK && popup.SelectedGuest != null)
-                    ApplyIdentitySearchResultToForm(popup.SelectedGuest);
-            }
-        }
-
-        private void ApplyIdentitySearchResultToForm(IdentityGuestSearchResult guest)
-        {
-            if (guest == null)
-                return;
-
-            txtTitle.Text = NormalizeIdentitySearchTitle(guest.GuestTitle);
-            txtFirstName.Text = guest.FirstName;
-            txtMiddleName.Text = guest.MiddleName;
-            txtLastName.Text = guest.LastName;
-            txtGstCod.Text = guest.GuestCode;
-            txtAddress.Text = guest.GuestAddress;
-            txtCountry.Text = guest.GuestCountry;
-            txtCity.Text = guest.GuestCity;
-            txtState.Text = guest.GuestState;
-            txtZip.Text = guest.GuestZip;
-            txtPhone.Text = guest.GuestTelephone;
-            txtMobile.Text = guest.GuestMobile;
-            txtNationality.Text = guest.Nationality;
-            txtPassportNumber.Text = guest.Passport;
-            txtEmail.Text = guest.GuestEmail;
-
-            if (!string.IsNullOrWhiteSpace(guest.WorkPermit))
-                txtIdNumber.Text = guest.WorkPermit;
-
-            if (!string.IsNullOrWhiteSpace(guest.Passport))
-                txtDocumentType.Text = "Passport";
-
-            if (guest.DateOfBirth.HasValue)
-            {
-                chkBirthDate.Checked = true;
-                dtBirthDate.Value = guest.DateOfBirth.Value;
-            }
-            else
-            {
-                chkBirthDate.Checked = false;
-            }
-
-            if (guest.PassportIssueDate.HasValue)
-            {
-                chkIssueDate.Checked = true;
-                dtIssueDate.Value = guest.PassportIssueDate.Value;
-            }
-            else
-            {
-                chkIssueDate.Checked = false;
-            }
-
-            string gender = (guest.Gender ?? string.Empty).Trim();
-            if (gender.Equals("MALE", StringComparison.OrdinalIgnoreCase))
-                SelectGender(1);
-            else if (gender.Equals("FEMALE", StringComparison.OrdinalIgnoreCase))
-                SelectGender(2);
-
-            SetDetailsVisible(true);
-            SetMsg("Guest data loaded from identity search.");
-        }
-
-        private static string NormalizeIdentitySearchTitle(string value)
-        {
-            string title = (value ?? string.Empty).Trim().Trim('.');
-
-            if (title.Equals("Mr", StringComparison.OrdinalIgnoreCase))
-                return "Mr";
-
-            if (title.Equals("Ms", StringComparison.OrdinalIgnoreCase))
-                return "Ms";
-
-            if (title.Equals("Miss", StringComparison.OrdinalIgnoreCase))
-                return "Miss";
-
-            return "Mr";
-        }
         // INNER CLASS
         // =====================================================================
         private class ComboBoxItem
@@ -2569,191 +2483,5 @@ END";
         {
 
         }
-
-
-        // =====================================================================
-        // MERGED FROM TitleComboSupport.cs
-        // =====================================================================
-        private ComboBox _cmbTitle;
-        private static readonly string[] AllowedGuestTitles = { "Mr", "Ms", "Miss" };
-
-        protected override void OnHandleCreated(EventArgs e)
-        {
-            base.OnHandleCreated(e);
-            InitializeTitleCombo();
-            ApplyOverlayFixOnce();
-        }
-
-        private void InitializeTitleCombo()
-        {
-            if (_cmbTitle != null || txtTitle == null)
-                return;
-
-            _cmbTitle = new ComboBox
-            {
-                Name = "cmbTitle",
-                Location = txtTitle.Location,
-                Size = new Size(txtTitle.Width, txtTitle.Height),
-                TabIndex = txtTitle.TabIndex,
-                Visible = false,
-                DropDownStyle = ComboBoxStyle.DropDownList
-            };
-
-            _cmbTitle.Items.AddRange(AllowedGuestTitles.Cast<object>().ToArray());
-
-            Controls.Add(_cmbTitle);
-            _cmbTitle.BringToFront();
-
-            txtTitle.VisibleChanged += (_, __) => SyncTitleComboVisibility();
-            txtTitle.EnabledChanged += (_, __) => SyncTitleComboVisibility();
-            txtTitle.ReadOnlyChanged += (_, __) => SyncTitleComboVisibility();
-            txtTitle.TextChanged += (_, __) => SyncTitleComboFromTextBox();
-            _cmbTitle.SelectedIndexChanged += (_, __) => SyncTitleTextBoxFromCombo();
-
-            if (string.IsNullOrWhiteSpace(NormalizeGuestTitle(txtTitle.Text)))
-                txtTitle.Text = "Mr";
-
-            SyncTitleComboFromTextBox();
-            SyncTitleComboVisibility();
-        }
-
-        private void SyncTitleComboVisibility()
-        {
-            if (_cmbTitle == null || txtTitle == null)
-                return;
-
-            bool shouldShow = lblTitle != null ? lblTitle.Visible : txtTitle.Visible;
-            txtTitle.Visible = false;
-
-            _cmbTitle.Visible = shouldShow;
-            _cmbTitle.Enabled = txtTitle.Enabled && !txtTitle.ReadOnly;
-            _cmbTitle.Location = txtTitle.Location;
-            _cmbTitle.Size = txtTitle.Size;
-            _cmbTitle.BringToFront();
-        }
-
-        private void SyncTitleComboFromTextBox()
-        {
-            if (_cmbTitle == null || txtTitle == null)
-                return;
-
-            string normalizedTitle = NormalizeGuestTitle(txtTitle.Text);
-
-            if (string.IsNullOrWhiteSpace(normalizedTitle))
-                normalizedTitle = "Mr";
-
-            if (!string.Equals(txtTitle.Text, normalizedTitle, StringComparison.Ordinal))
-                txtTitle.Text = normalizedTitle;
-
-            int index = _cmbTitle.Items.IndexOf(normalizedTitle);
-            if (index >= 0 && _cmbTitle.SelectedIndex != index)
-                _cmbTitle.SelectedIndex = index;
-        }
-
-        private void SyncTitleTextBoxFromCombo()
-        {
-            if (_cmbTitle == null || txtTitle == null)
-                return;
-
-            string selectedTitle = _cmbTitle.SelectedItem?.ToString() ?? "Mr";
-            selectedTitle = NormalizeGuestTitle(selectedTitle);
-            if (string.IsNullOrWhiteSpace(selectedTitle))
-                selectedTitle = "Mr";
-
-            if (!string.Equals(txtTitle.Text, selectedTitle, StringComparison.Ordinal))
-                txtTitle.Text = selectedTitle;
-        }
-
-        private static string NormalizeGuestTitle(string value)
-        {
-            string title = (value ?? string.Empty).Trim().Trim('.');
-
-            if (string.Equals(title, "Mr", StringComparison.OrdinalIgnoreCase))
-                return "Mr";
-
-            if (string.Equals(title, "Ms", StringComparison.OrdinalIgnoreCase))
-                return "Ms";
-
-            if (string.Equals(title, "Miss", StringComparison.OrdinalIgnoreCase))
-                return "Miss";
-
-            return string.Empty;
-        }
-
-
-        // =====================================================================
-        // MERGED FROM NationalityEnterFix.cs
-        // =====================================================================
-        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
-        {
-            if ((keyData == Keys.Enter || keyData == Keys.Return) && IsNationalityComboFocused())
-            {
-                CommitNationalityEnterSelection();
-                return true;
-            }
-
-            return base.ProcessCmdKey(ref msg, keyData);
-        }
-
-        private bool IsNationalityComboFocused()
-        {
-            return _cmbNationality != null &&
-                   (_cmbNationality.Focused || _cmbNationality.ContainsFocus || ActiveControl == _cmbNationality);
-        }
-
-        private void CommitNationalityEnterSelection()
-        {
-            if (_cmbNationality == null)
-                return;
-
-            string value = _cmbNationality.Text?.Trim() ?? string.Empty;
-
-            // If AutoComplete selected a suffix, keep only what the user actually typed.
-            // If the whole text is selected, keep the whole value instead of treating it as empty.
-            if (_cmbNationality.SelectionLength > 0 && _cmbNationality.SelectionStart > 0)
-            {
-                int selectedStart = _cmbNationality.SelectionStart;
-                if (selectedStart < value.Length)
-                    value = value.Substring(0, selectedStart).Trim();
-            }
-
-            if (string.IsNullOrWhiteSpace(value))
-                value = _cmbNationality.Text?.Trim() ?? string.Empty;
-
-            NormalizeNationalitySelection(value);
-
-            _cmbNationality.DroppedDown = false;
-            _cmbNationality.SelectionStart = _cmbNationality.Text.Length;
-            _cmbNationality.SelectionLength = 0;
-        }
-
-
-        // =====================================================================
-        // MERGED FROM OverlayComboVisibilityFix.cs
-        // =====================================================================
-        private bool _overlayFixDone;
-
-        private void ApplyOverlayFixOnce()
-        {
-            if (_overlayFixDone) return;
-            _overlayFixDone = true;
-
-            lblTitle.VisibleChanged += (_, __) => { if (_cmbTitle != null) _cmbTitle.Visible = lblTitle.Visible; };
-            lblNationality.VisibleChanged += (_, __) => { if (_cmbNationality != null) _cmbNationality.Visible = lblNationality.Visible; };
-        }
-
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            e.Cancel = true;
-            this.WindowState = FormWindowState.Minimized;
-        }
-
-        private void lblArrivalSearchDate_Click(object sender, EventArgs e)
-        {
-            System.Windows.Forms.Application.ExitThread();
-        }
     }
 }
-
-
-

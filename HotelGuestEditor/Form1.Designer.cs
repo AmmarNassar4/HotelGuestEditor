@@ -26,6 +26,7 @@
             lblGuests = new Label();
             cmbGuests = new ComboBox();
             btnLoadSelectedGuest = new Button();
+            btnIdentitySearch = new Button();
             lblGstCod = new Label();
             txtGstCod = new TextBox();
             lblSrlNub = new Label();
@@ -174,6 +175,17 @@
             btnLoadSelectedGuest.UseVisualStyleBackColor = true;
             btnLoadSelectedGuest.Visible = false;
             btnLoadSelectedGuest.Click += btnLoadSelectedGuest_Click;
+            // 
+            // btnIdentitySearch
+            // 
+            btnIdentitySearch.Location = new Point(741, 281);
+            btnIdentitySearch.Name = "btnIdentitySearch";
+            btnIdentitySearch.Size = new Size(75, 28);
+            btnIdentitySearch.TabIndex = 126;
+            btnIdentitySearch.Text = "Search ID";
+            btnIdentitySearch.UseVisualStyleBackColor = true;
+            btnIdentitySearch.Visible = false;
+            btnIdentitySearch.Click += btnIdentitySearch_Click;
             // 
             // lblGstCod
             // 
@@ -554,6 +566,7 @@
             lblArrivalSearchDate.Size = new Size(68, 15);
             lblArrivalSearchDate.TabIndex = 100;
             lblArrivalSearchDate.Text = "Arrival Date";
+            lblArrivalSearchDate.Click += lblArrivalSearchDate_Click;
             // 
             // dtArrivalSearchDate
             // 
@@ -605,7 +618,7 @@
             dgvReservations.ReadOnly = true;
             dgvReservations.RowHeadersVisible = false;
             dgvReservations.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvReservations.Size = new Size(710, 230);
+            dgvReservations.Size = new Size(702, 230);
             dgvReservations.TabIndex = 103;
             dgvReservations.CellDoubleClick += dgvReservations_CellDoubleClick;
             dgvReservations.ColumnHeaderMouseClick += dgvReservations_ColumnHeaderMouseClick;
@@ -844,6 +857,7 @@
             Controls.Add(lblSrlNub);
             Controls.Add(txtGstCod);
             Controls.Add(lblGstCod);
+            Controls.Add(btnIdentitySearch);
             Controls.Add(btnLoadSelectedGuest);
             Controls.Add(cmbGuests);
             Controls.Add(lblGuests);
@@ -855,6 +869,7 @@
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "Form1";
             Text = "Reservation Guest Editor";
+            FormClosing += Form1_FormClosing;
             ((System.ComponentModel.ISupportInitialize)dgvReservations).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -870,6 +885,7 @@
         private System.Windows.Forms.Label lblGuests;
         private System.Windows.Forms.ComboBox cmbGuests;
         private System.Windows.Forms.Button btnLoadSelectedGuest;
+        private System.Windows.Forms.Button btnIdentitySearch;
         private System.Windows.Forms.Label lblGstCod;
         private System.Windows.Forms.TextBox txtGstCod;
         private System.Windows.Forms.Label lblSrlNub;
@@ -936,3 +952,4 @@
         private Label lblAddress;
     }
 }
+
