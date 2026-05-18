@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
@@ -233,7 +233,7 @@ COALESCE(A.RESTL1, '') AS [Guest Telephone],
 
     CASE 
         WHEN G.GSTBTH <> 0 
-            THEN CONVERT(DATETIME, CONVERT(CHAR(8), G.GSTBTH))
+            THEN CONVERT(DATE, CONVERT(CHAR(8), G.GSTBTH), 112)
         ELSE NULL
     END AS [Date Of Birth],
 
@@ -290,3 +290,4 @@ ORDER BY A.GSTCOD DESC;";
         }
     }
 }
+
