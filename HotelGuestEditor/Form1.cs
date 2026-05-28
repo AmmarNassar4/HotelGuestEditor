@@ -21,8 +21,7 @@ namespace HotelGuestEditor
     public partial class Form1 : Form
     {
         // ─── SQL ──────────────────────────────────────────────────────────────
-        private readonly string _connectionString =
-            "Server=192.168.8.60;Database=RAMADA_WYNDHAM;User Id=sa2;Password=Qaz123456.;Encrypt=false;";
+        private string ConnectionString => _settings.ConnectionString;
 
         // ─── Passport scanner ─────────────────────────────────────────────────
         private readonly RegulaPassportScanService _regulaService = new RegulaPassportScanService();
@@ -332,7 +331,7 @@ ORDER BY
     RL.FullName,
     RL.RESNUB;";
 
-            using (var con = new SqlConnection(_connectionString))
+            using (var con = new SqlConnection(ConnectionString))
             using (var cmd = new SqlCommand(sql, con))
             {
                 cmd.Parameters.AddWithValue("@ARRDAT", arrDate);
@@ -1233,7 +1232,7 @@ ORDER BY
     SRLNUB,
     SUBSRL;";
 
-            using (var con = new SqlConnection(_connectionString))
+            using (var con = new SqlConnection(ConnectionString))
             using (var cmd = new SqlCommand(sql, con))
             {
                 cmd.Parameters.AddWithValue("@RESNUB", resNub);
@@ -1320,7 +1319,7 @@ LEFT JOIN PMS.FMR13TBL R13
     ON R13.RESNUB = R2.RESNUB AND R13.SRLNUB = R2.SRLNUB AND R13.SUBSRL = R2.SUBSRL
 WHERE R2.RESNUB = @RESNUB AND R2.SRLNUB = @SRLNUB AND R2.SUBSRL = @SUBSRL;";
 
-            using (var con = new SqlConnection(_connectionString))
+            using (var con = new SqlConnection(ConnectionString))
             using (var cmd = new SqlCommand(sql, con))
             {
                 cmd.Parameters.AddWithValue("@RESNUB", resNub);
@@ -1530,7 +1529,7 @@ WHERE R2.RESNUB = @RESNUB AND R2.SRLNUB = @SRLNUB AND R2.SUBSRL = @SUBSRL;";
             }
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private async void btnSave_Click(object sender, EventArgs e)
         {
             if (!long.TryParse(txtResNub.Text.Trim(), out long resNub))
             {
@@ -1545,27 +1544,29 @@ WHERE R2.RESNUB = @RESNUB AND R2.SRLNUB = @SRLNUB AND R2.SUBSRL = @SUBSRL;";
                 return;
             }
 
-            using (var con = new SqlConnection(_connectionString))
+            await Task.Run(() =>
             {
-                con.Open();
-                using (var tran = con.BeginTransaction())
+                using (var con = new SqlConnection(ConnectionString))
                 {
-                    try
+                    con.Open();
+                    using (var tran = con.BeginTransaction())
                     {
-                        SaveFmr02(con, tran, resNub, srlNub, subSrl);
-                        SaveFmr03(con, tran, resNub, srlNub, subSrl);
-                        SaveFmr13(con, tran, resNub, srlNub, subSrl);
-
-                        tran.Commit();
-                        MessageBox.Show("Guest data saved successfully.");
-                    }
-                    catch (Exception ex)
-                    {
-                        tran.Rollback();
-                        MessageBox.Show("Save failed: " + ex.Message);
+                        try
+                        {
+                            SaveFmr02(con, tran, resNub, srlNub, subSrl);
+                            SaveFmr03(con, tran, resNub, srlNub, subSrl);
+                            SaveFmr13(con, tran, resNub, srlNub, subSrl);
+                            tran.Commit();
+                            Invoke(new Action(() => MessageBox.Show("Guest data saved successfully.")));
+                        }
+                        catch (Exception ex)
+                        {
+                            tran.Rollback();
+                            Invoke(new Action(() => MessageBox.Show("Save failed: " + ex.Message)));
+                        }
                     }
                 }
-            }
+            });
         }
 
         // =====================================================================
@@ -1604,42 +1605,66 @@ WHERE RESNUB = @RESNUB AND SRLNUB = @SRLNUB AND SUBSRL = @SUBSRL;";
             }
         }
 
-        private void SaveFmr03(SqlConnection con, SqlTransaction tran, long resNub, int srlNub, int subSrl)
+        private void SaveFmr03(SqlConnection con, SqlTransaction tran, long resNub, int srlNub, int subSrl, bool useVisaNumber = false)
+        {
+            if (useVisaNumber)
+            {
+                SaveFmr03_Visa(con, tran, resNub, srlNub, subSrl);
+            }
+            else
+            {
+                SaveFmr03_GSTN(con, tran, resNub, srlNub, subSrl);
+            }
+        }
+
+        private void SaveFmr03_GSTN(SqlConnection con, SqlTransaction tran, long resNub, int srlNub, int subSrl)
         {
             string sql = @"
-IF EXISTS (
-    SELECT 1 FROM PMS.FMR03TBL
+IF EXISTS (SELECT 1 FROM PMS.FMR03TBL WHERE RESNUB = @RESNUB AND SRLNUB = @SRLNUB AND SUBSRL = @SUBSRL)
+    UPDATE PMS.FMR03TBL SET DATBTH = @DATBTH, FUTU04 = @GSTN, PASNUB = @PASNUB, ISSDAT = @ISSDAT, PASEXP = @PASEXP, ISSPLA = @ISSPLA, FUTU05 = COALESCE(@FUTU05, FUTU05)
     WHERE RESNUB = @RESNUB AND SRLNUB = @SRLNUB AND SUBSRL = @SUBSRL
-)
-BEGIN
-    UPDATE PMS.FMR03TBL
-    SET DATBTH = @DATBTH, FUTU04 = @GSTN, PASNUB = @PASNUB,
-        ISSDAT = @ISSDAT, PASEXP = @PASEXP, ISSPLA = @ISSPLA,
-        FUTU05 = COALESCE(@FUTU05, FUTU05)
-    WHERE RESNUB = @RESNUB AND SRLNUB = @SRLNUB AND SUBSRL = @SUBSRL
-END
 ELSE
-BEGIN
     INSERT INTO PMS.FMR03TBL (RESNUB, SRLNUB, SUBSRL, DATBTH, FUTU04, PASNUB, ISSDAT, PASEXP, ISSPLA, FUTU05)
-    VALUES (@RESNUB, @SRLNUB, @SUBSRL, @DATBTH, @GSTN, @PASNUB, @ISSDAT, @PASEXP, @ISSPLA, @FUTU05)
-END";
+    VALUES (@RESNUB, @SRLNUB, @SUBSRL, @DATBTH, @GSTN, @PASNUB, @ISSDAT, @PASEXP, @ISSPLA, @FUTU05)";
 
             using (var cmd = new SqlCommand(sql, con, tran))
             {
-                cmd.Parameters.AddWithValue("@RESNUB", resNub);
-                cmd.Parameters.AddWithValue("@SRLNUB", srlNub);
-                cmd.Parameters.AddWithValue("@SUBSRL", subSrl);
-                cmd.Parameters.AddWithValue("@DATBTH", chkBirthDate.Checked ? ToYyyyMmDdInt(dtBirthDate.Value) : 0);
+                AssignFmr03Params(cmd, resNub, srlNub, subSrl);
                 cmd.Parameters.AddWithValue("@GSTN", DbValue(txtGstn.Text) ?? string.Empty);
-                cmd.Parameters.AddWithValue("@PASNUB", DbValue(txtPassportNumber.Text) ?? string.Empty);
-                cmd.Parameters.AddWithValue("@ISSDAT", chkIssueDate.Checked ? ToYyyyMmDdInt(dtIssueDate.Value) : 0);
-                cmd.Parameters.AddWithValue("@PASEXP", chkExpiryDate.Checked ? ToYyyyMmDdInt(dtExpiryDate.Value) : 0);
-                cmd.Parameters.AddWithValue("@ISSPLA", DbValue(txtPassportIssuePlace.Text));
-
-                object futu05Value = BuildFutu05();
-                cmd.Parameters.AddWithValue("@FUTU05", futu05Value ?? (object)DBNull.Value);
                 cmd.ExecuteNonQuery();
             }
+        }
+
+        private void SaveFmr03_Visa(SqlConnection con, SqlTransaction tran, long resNub, int srlNub, int subSrl)
+        {
+            string sql = @"
+IF EXISTS (SELECT 1 FROM PMS.FMR03TBL WHERE RESNUB = @RESNUB AND SRLNUB = @SRLNUB AND SUBSRL = @SUBSRL)
+    UPDATE PMS.FMR03TBL SET DATBTH = @DATBTH, VISNUB = @VISNUB, PASNUB = @PASNUB, ISSDAT = @ISSDAT, PASEXP = @PASEXP, ISSPLA = @ISSPLA, FUTU05 = COALESCE(@FUTU05, FUTU05)
+    WHERE RESNUB = @RESNUB AND SRLNUB = @SRLNUB AND SUBSRL = @SUBSRL
+ELSE
+    INSERT INTO PMS.FMR03TBL (RESNUB, SRLNUB, SUBSRL, DATBTH, VISNUB, PASNUB, ISSDAT, PASEXP, ISSPLA, FUTU05)
+    VALUES (@RESNUB, @SRLNUB, @SUBSRL, @DATBTH, @VISNUB, @PASNUB, @ISSDAT, @PASEXP, @ISSPLA, @FUTU05)";
+
+            using (var cmd = new SqlCommand(sql, con, tran))
+            {
+                AssignFmr03Params(cmd, resNub, srlNub, subSrl);
+                cmd.Parameters.AddWithValue("@VISNUB", DbValue(txtGstn.Text) ?? string.Empty);
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        private void AssignFmr03Params(SqlCommand cmd, long resNub, int srlNub, int subSrl)
+        {
+            cmd.Parameters.AddWithValue("@RESNUB", resNub);
+            cmd.Parameters.AddWithValue("@SRLNUB", srlNub);
+            cmd.Parameters.AddWithValue("@SUBSRL", subSrl);
+            cmd.Parameters.AddWithValue("@DATBTH", chkBirthDate.Checked ? ToYyyyMmDdInt(dtBirthDate.Value) : 0);
+            cmd.Parameters.AddWithValue("@PASNUB", DbValue(txtPassportNumber.Text) ?? string.Empty);
+            cmd.Parameters.AddWithValue("@ISSDAT", chkIssueDate.Checked ? ToYyyyMmDdInt(dtIssueDate.Value) : 0);
+            cmd.Parameters.AddWithValue("@PASEXP", chkExpiryDate.Checked ? ToYyyyMmDdInt(dtExpiryDate.Value) : 0);
+            cmd.Parameters.AddWithValue("@ISSPLA", DbValue(txtPassportIssuePlace.Text));
+            object futu05Value = BuildFutu05();
+            cmd.Parameters.AddWithValue("@FUTU05", futu05Value ?? (object)DBNull.Value);
         }
 
         private void SaveFmr13(SqlConnection con, SqlTransaction tran, long resNub, int srlNub, int subSrl)
@@ -1809,7 +1834,9 @@ END";
 
         private DateTime ParseYyyyMmDd(string value)
         {
-            string clean = value.Trim();
+            string clean = value?.Trim() ?? string.Empty;
+            if (clean.Length < 8)
+                throw new ArgumentException("Expected 8-digit yyyyMMdd format.", nameof(value));
             int year = int.Parse(clean.Substring(0, 4));
             int month = int.Parse(clean.Substring(4, 2));
             int day = int.Parse(clean.Substring(6, 2));
@@ -1857,6 +1884,7 @@ END";
             StopPassportStandby();
             _passportStandbyCts?.Dispose();
             _regulaService.Dispose();
+            _http.Dispose();
             await DisconnectHubAsync();
             base.OnFormClosed(e);
         }
@@ -2355,7 +2383,7 @@ END";
 
             try
             {
-                using (var con = new SqlConnection(_connectionString))
+                using (var con = new SqlConnection(ConnectionString))
                 using (var cmd = new SqlCommand(@"
 SELECT TOP 1 VISNUB
 FROM PMS.FMR03TBL
@@ -2391,7 +2419,7 @@ WHERE RESNUB = @RESNUB AND SRLNUB = @SRLNUB AND SUBSRL = @SUBSRL;", con))
                 return false;
             }
 
-            using (var con = new SqlConnection(_connectionString))
+            using (var con = new SqlConnection(ConnectionString))
             {
                 con.Open();
                 using (var tran = con.BeginTransaction())
@@ -2416,42 +2444,10 @@ WHERE RESNUB = @RESNUB AND SRLNUB = @SRLNUB AND SUBSRL = @SUBSRL;", con))
             }
         }
 
+        [Obsolete("Use SaveFmr03(con, tran, resNub, srlNub, subSrl, useVisaNumber)")]
         private void SaveFmr03WithVisaNumber(SqlConnection con, SqlTransaction tran, long resNub, int srlNub, int subSrl)
         {
-            string sql = @"
-IF EXISTS (
-    SELECT 1 FROM PMS.FMR03TBL
-    WHERE RESNUB = @RESNUB AND SRLNUB = @SRLNUB AND SUBSRL = @SUBSRL
-)
-BEGIN
-    UPDATE PMS.FMR03TBL
-    SET DATBTH = @DATBTH, VISNUB = @VISNUB, PASNUB = @PASNUB,
-        ISSDAT = @ISSDAT, PASEXP = @PASEXP, ISSPLA = @ISSPLA,
-        FUTU05 = COALESCE(@FUTU05, FUTU05)
-    WHERE RESNUB = @RESNUB AND SRLNUB = @SRLNUB AND SUBSRL = @SUBSRL
-END
-ELSE
-BEGIN
-    INSERT INTO PMS.FMR03TBL (RESNUB, SRLNUB, SUBSRL, DATBTH, VISNUB, PASNUB, ISSDAT, PASEXP, ISSPLA, FUTU05)
-    VALUES (@RESNUB, @SRLNUB, @SUBSRL, @DATBTH, @VISNUB, @PASNUB, @ISSDAT, @PASEXP, @ISSPLA, @FUTU05)
-END";
-
-            using (var cmd = new SqlCommand(sql, con, tran))
-            {
-                cmd.Parameters.AddWithValue("@RESNUB", resNub);
-                cmd.Parameters.AddWithValue("@SRLNUB", srlNub);
-                cmd.Parameters.AddWithValue("@SUBSRL", subSrl);
-                cmd.Parameters.AddWithValue("@DATBTH", chkBirthDate.Checked ? ToYyyyMmDdInt(dtBirthDate.Value) : 0);
-                cmd.Parameters.AddWithValue("@VISNUB", DbValue(txtGstn.Text) ?? string.Empty);
-                cmd.Parameters.AddWithValue("@PASNUB", DbValue(txtPassportNumber.Text) ?? string.Empty);
-                cmd.Parameters.AddWithValue("@ISSDAT", chkIssueDate.Checked ? ToYyyyMmDdInt(dtIssueDate.Value) : 0);
-                cmd.Parameters.AddWithValue("@PASEXP", chkExpiryDate.Checked ? ToYyyyMmDdInt(dtExpiryDate.Value) : 0);
-                cmd.Parameters.AddWithValue("@ISSPLA", DbValue(txtPassportIssuePlace.Text));
-
-                object futu05Value = BuildFutu05();
-                cmd.Parameters.AddWithValue("@FUTU05", futu05Value ?? (object)DBNull.Value);
-                cmd.ExecuteNonQuery();
-            }
+            SaveFmr03(con, tran, resNub, srlNub, subSrl, true);
         }
 
         private bool TryGetCurrentGuestKey(out long resNub, out int srlNub, out int subSrl)
@@ -2472,7 +2468,7 @@ END";
         // =====================================================================
         private void btnIdentitySearch_Click(object sender, EventArgs e)
         {
-            using (var popup = new Form2(_connectionString, txtPassportNumber.Text))
+            using (var popup = new Form2(ConnectionString, txtPassportNumber.Text))
             {
                 if (popup.ShowDialog(this) == DialogResult.OK && popup.SelectedGuest != null)
                     ApplyIdentitySearchResultToForm(popup.SelectedGuest);

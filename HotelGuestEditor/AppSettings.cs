@@ -12,6 +12,16 @@ namespace HotelGuestEditor
         public string TemplateId { get; private set; } = "T_Checkin";
         public int SessionMonitorIntervalSeconds { get; private set; } = 10;
 
+        // ─── Database ─────────────────────────────────────────────────────
+        public string DbServer { get; private set; } = string.Empty;
+        public string DbDatabase { get; private set; } = string.Empty;
+        public string DbUser { get; private set; } = string.Empty;
+        public string DbPassword { get; private set; } = string.Empty;
+        public bool DbEncrypt { get; private set; }
+
+        public string ConnectionString =>
+            $"Server={DbServer};Database={DbDatabase};User Id={DbUser};Password={DbPassword};Encrypt={(DbEncrypt ? "true" : "false")};";
+
         public static AppSettings Load()
         {
             var settings = new AppSettings();
@@ -28,6 +38,13 @@ namespace HotelGuestEditor
             settings.KioskName = ReadString(guestGate, "KioskName", settings.KioskId);
             settings.TemplateId = ReadString(guestGate, "TemplateId", settings.TemplateId);
             settings.SessionMonitorIntervalSeconds = ReadInt(guestGate, "SessionMonitorIntervalSeconds", settings.SessionMonitorIntervalSeconds, 1, 3600);
+
+            JObject database = root["Database"] as JObject ?? new JObject();
+            settings.DbServer = ReadString(database, "Server", settings.DbServer);
+            settings.DbDatabase = ReadString(database, "Database", settings.DbDatabase);
+            settings.DbUser = ReadString(database, "User", settings.DbUser);
+            settings.DbPassword = ReadString(database, "Password", settings.DbPassword);
+            settings.DbEncrypt = bool.TryParse(database["Encrypt"]?.ToString(), out bool encrypt) ? encrypt : false;
 
             return settings;
         }
